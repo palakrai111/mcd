@@ -9,6 +9,8 @@ export default function Foods() {
   const [quantities, setQuantities] = useState({});
   const [searchText, setSearchText] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [sortOption, setSortOption] = useState("");
+
   const navigate = useNavigate();
 
   // Fetch categories
@@ -25,6 +27,26 @@ export default function Foods() {
 
     apiFetch(url).then(setFoods);
   }, [searchText, selectedCategory]);
+
+  const sortedFoods = [...foods].sort((a, b) => {
+    switch (sortOption) {
+      case "price-asc":
+        return a.price - b.price;
+  
+      case "price-desc":
+        return b.price - a.price;
+  
+      case "name-asc":
+        return a.name.localeCompare(b.name);
+  
+      case "name-desc":
+        return b.name.localeCompare(a.name);
+  
+      default:
+        return 0;
+    }
+  });
+  
 
   const handleQtyChange = (foodId, value) => {
     setQuantities((prev) => ({
@@ -66,31 +88,51 @@ if (!user) {
 
       {/* Search + Filter */}
       <div className="flex gap-3 mb-6">
-        <input
-          type="text"
-          placeholder="Search food..."
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          className="border p-2 rounded w-64"
-        />
+       
+{/* Search + Filter + Sort */}
+<div className="flex gap-3 mb-6 flex-wrap">
+  <input
+    type="text"
+    placeholder="Search food..."
+    value={searchText}
+    onChange={(e) => setSearchText(e.target.value)}
+    className="border p-2 rounded w-64"
+  />
 
-        <select
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-          className="border p-2 rounded"
-        >
-          <option value="">All Categories</option>
-          {categories.map((cat) => (
-            <option key={cat.id} value={cat.id}>
-              {cat.name}
-            </option>
-          ))}
-        </select>
+  <select
+    value={selectedCategory}
+    onChange={(e) => setSelectedCategory(e.target.value)}
+    className="border p-2 rounded"
+  >
+    <option value="">All Categories</option>
+    {categories.map((cat) => (
+      <option key={cat.id} value={cat.id}>
+        {cat.name}
+      </option>
+    ))}
+  </select>
+
+  {/* SORT DROPDOWN */}
+  <select
+    value={sortOption}
+    onChange={(e) => setSortOption(e.target.value)}
+    className="border p-2 rounded"
+  >
+    <option value="">Sort By</option>
+    <option value="price-asc">Price: Low → High</option>
+    <option value="price-desc">Price: High → Low</option>
+    <option value="name-asc">Name: A → Z</option>
+    <option value="name-desc">Name: Z → A</option>
+  </select>
+</div>
+
+
+
       </div>
 
       {/* Food Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {foods.map((food) => (
+        {sortedFoods.map((food) => (
           <FoodCard
             key={food.id}
             food={food}

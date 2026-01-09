@@ -26,7 +26,8 @@ export default function LoginPage() {
       // ✅ Save logged-in user
       localStorage.setItem("user", JSON.stringify(user));
 
-      navigate("/foods");
+      // navigate("/foods");
+      window.location.href=("/foods")
     } catch (err) {
       setError("Invalid email or password");
     }

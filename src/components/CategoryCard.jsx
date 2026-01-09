@@ -6,6 +6,7 @@ export default function CategoryCard({ category, onClick }) {
       >
         <h2 className="font-bold">{category.name}</h2>
       </div>
+      
     );
   }
   
