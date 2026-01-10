@@ -10,6 +10,9 @@ export default function Foods() {
   const [searchText, setSearchText] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [sortOption, setSortOption] = useState("");
+  const [page, setPage] = useState(0);
+  const[size] = useState(8);
+const [totalPages, setTotalPages] = useState(0); 
 
   const navigate = useNavigate();
 
@@ -20,14 +23,25 @@ export default function Foods() {
 
   // Fetch foods on search / category change
   useEffect(() => {
-    let url = "/api/foods";
-    if (searchText) url = `/api/foods/search?name=${searchText}`;
+    let url = `/api/foods?page=${page}&size=${size}`;
+    if (searchText) url = `/api/foods/search?name=${searchText}&page=${page}&size=${size}`;
     else if (selectedCategory)
-      url = `/api/foods/category?categoryId=${selectedCategory}`;
+      url = `/api/foods/category?categoryId=${selectedCategory}&page=${page}&size=${size}`;
 
-    apiFetch(url).then(setFoods);
+    
+    apiFetch(url).then((data) => {
+      setFoods(data.content);
+      setTotalPages(data.totalPages);
+    });
+  }, [searchText, selectedCategory, page]);
+
+  console.log(foods);
+  console.log(totalPages);
+
+  useEffect(() => {
+    setPage(0);
   }, [searchText, selectedCategory]);
-
+  
   const sortedFoods = [...foods].sort((a, b) => {
     switch (sortOption) {
       case "price-asc":
@@ -140,7 +154,10 @@ if (!user) {
             onQtyChange={handleQtyChange}
           />
         ))}
-      </div>
+         
+    </div>
+
+
 
       {/* Place Order */}
       <div className="mt-6">
@@ -151,6 +168,39 @@ if (!user) {
           Place Order
         </button>
       </div>
+
+
+      {/* Pagination Buttons */}
+<div className="flex justify-center items-center mt-8 gap-2">
+  <button
+    disabled={page === 0}
+    onClick={() => setPage(page - 1)}
+    className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+  >
+    Prev
+  </button>
+
+  {[...Array(totalPages)].map((_, i) => (
+    <button
+      key={i}
+      onClick={() => setPage(i)}
+      className={`px-4 py-2 rounded ${
+        page === i ? "bg-red-500 text-white" : "bg-gray-200"
+      }`}
+    >
+      {i + 1}
+    </button>
+  ))}
+
+  <button
+    disabled={page === totalPages - 1}
+    onClick={() => setPage(page + 1)}
+    className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+  >
+    Next
+  </button>
+</div>
+
     </div>
   );
 }
