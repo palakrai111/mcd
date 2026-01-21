@@ -69,6 +69,38 @@ const [totalPages, setTotalPages] = useState(0);
     }));
   };
 
+  const addToCart = async (foodId) => {
+    const qty = quantities[foodId] || 1; // default qty = 1
+  
+    if (qty <= 0) {
+      alert("Quantity must be at least 1");
+      return;
+    }
+  
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+  
+    try {
+      await apiFetch(
+        `/api/cart/add/${user.id}/${foodId}?qty=${qty}`,
+        { method: "POST" }
+      );
+  
+      alert("Item added to cart 🛒");
+  
+    } catch (err) {
+      alert("Failed to add to cart");
+    }
+  };
+  
+
+
+
+
+
   const placeOrder = async () => {
     const body = {};
     Object.keys(quantities).forEach((id) => {
@@ -152,6 +184,7 @@ if (!user) {
             food={food}
             quantity={quantities[food.id]}
             onQtyChange={handleQtyChange}
+            onAddToCart={addToCart}
           />
         ))}
          

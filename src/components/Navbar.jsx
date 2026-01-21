@@ -1,75 +1,102 @@
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+
+import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { apiFetch } from "../services/api";
 
 export default function Navbar() {
+
+
+  const [cartCount, setCartCount] = useState(0);
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
- 
-// Load user from localStorage
-useEffect(() => {
-  const storedUser = JSON.parse(localStorage.getItem("user"));
-  setUser(storedUser);
-}, []);
+  const userString = localStorage.getItem("user");
+  const user = userString ? JSON.parse(userString) : null;
 
   const handleLogout = () => {
     localStorage.removeItem("user");
-    setUser(null);
     navigate("/login");
   };
 
+
+
+  useEffect(() => {
+    if (user) {
+      loadCartCount();
+    }
+  }, []);
+
+  const loadCartCount = async () => {
+    try {
+      const cart = await apiFetch(`/api/cart/${user.id}`);
+
+      const count = cart.items.reduce(
+        (sum, item) => sum + item.quantity,
+        0
+      );
+
+      setCartCount(count);
+    } catch (err) {
+      console.error("Cart not found");
+    }
+  };
+
   return (
-    <div className="bg-red-600 text-white p-4 flex justify-between">
-      <nav className="flex justify-between items-center px-6 py-4 bg-red-600 text-white">
-      
-      {/* LOGO */}
+    <nav className="bg-red-600 text-white px-6 py-4 flex justify-between items-center">
       <h1
         className="text-2xl font-bold cursor-pointer"
         onClick={() => navigate("/")}
       >
         McD
       </h1>
+      <div
+  className="relative cursor-pointer"
+  onClick={() => navigate("/cart")}
+>
+  <span className="text-2xl">🛒</span>
 
-      {/* RIGHT SIDE */}
+  {cartCount > 0 && (
+    <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs px-2 py-0.5 rounded-full">
+      {cartCount}
+    </span>
+  )}
+</div>
+
+
       <div className="flex items-center gap-4">
-        <button onClick={() => navigate("/foods")} className="hover:underline">
-          Menu
-        </button>
-
-        {user ? (
+        {/* Admin Links */}
+        {user?.role === "ADMIN" && (
           <>
-            <span className="font-medium">
-              Hi, {user.name}
-            </span>
-
-            <button
-              onClick={handleLogout}
-              className="bg-white text-red-600 px-4 py-1 rounded hover:bg-gray-100"
-            >
-              Logout
-            </button>
+            <Link to="/admin">Dashboard</Link>
+            <Link to="/admin/add-food">Add Food</Link>
+            <Link to="/admin/orders">All Orders</Link>
           </>
-        ) : (
+        )}
+
+        {/* User Links */}
+        {user?.role === "USER" && (
+          <>
+            <Link to="/foods">Menu</Link>
+            <Link to="/orders">My Orders</Link>
+          </>
+        )}
+
+        {/* Not logged in */}
+        {!user && (
+          <>
+            <Link to="/login">Login</Link>
+            <Link to="/register">Register</Link>
+          </>
+        )}
+
+        {/* Logout */}
+        {user && (
           <button
-            onClick={() => navigate("/login")}
-            className="bg-white text-red-600 px-4 py-1 rounded hover:bg-gray-100"
+            onClick={handleLogout}
+            className="bg-white text-red-600 px-3 py-1 rounded"
           >
-            Login
+            Logout
           </button>
         )}
       </div>
     </nav>
-
-
-      <h1 className="font-bold text-xl">McDonald's</h1>
-      <div className="space-x-4">
-       {/*<Link to="/categories">Categories</Link>*/}
-       <Link to="/register">Register</Link>
-       <Link to="/login">Login</Link>
-        <Link to="/foods">Foods</Link>
-        <Link to="/orders">Orders</Link>
-       
-      </div>
-    </div>
   );
 }

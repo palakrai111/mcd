@@ -13,5 +13,19 @@ export const apiFetch = async (url, options = {}) => {
     throw new Error("API Error");
   }
 
-  return response.json();
+
+
+  if (response.status === 204) {
+    console.log("This will never run"); 
+    return null;
+   
+  }
+
+  const text = await response.text();
+  if (!text) {
+    return null;
+  }
+
+  return JSON.parse(text);
+
 };

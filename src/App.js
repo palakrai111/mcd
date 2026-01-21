@@ -1,38 +1,41 @@
-import logo from './logo.svg';
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import Register from './pages/Register';
-import Categories from './pages/Categories';
-import React from "react"; // optional in modern React, but safe
-import { BrowserRouter, Routes, Route } from "react-router-dom"; // router
-import { CartProvider } from "./context/CartContext"; // your cart context
-import Navbar from "./components/Navbar"; // Navbar component
+import { CartProvider } from "./context/CartContext";
+import Navbar from "./components/Navbar";
 
+// USER PAGES
+import Register from "./pages/Register";
+import Foods from "./pages/Foods";
+import Orders from "./pages/Orders";
+import LoginPage from "./pages/LoginPage";
 
-import Foods from "./pages/Foods"; // Foods page
-import Orders from "./pages/Orders"; // Orders page
-import LoginPage from './pages/LoginPage';
-
-
+// ADMIN PAGES
+import AdminDashboard from "./pages/AdminDashboard";
+import AddFood from "./pages/AddFood";
+import AllOrders from "./pages/AllOrders";
+import CartPage from "./pages/CartPage";
 function App() {
   return (
-    
-    
-  <CartProvider>
+    <CartProvider>
       <BrowserRouter>
         <Navbar />
+
         <Routes>
-         {/* <Route path="/" element={<Categories />} />*/}
+          {/* USER ROUTES */}
           <Route path="/register" element={<Register />} />
-         {/*<Route path="/categories" element={<Categories />} />*/}
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/foods" element={<Foods />} />
           <Route path="/orders" element={<Orders />} />
-          <Route path="/login" element={<LoginPage />} />
+
+          {/* ADMIN ROUTES */}
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/add-food" element={<AddFood />} />
+          <Route path="/admin/orders" element={<AllOrders />} />
+          <Route path="/cart" element={<CartPage />} />
         </Routes>
       </BrowserRouter>
     </CartProvider>
-
-
-
   );
 }
 

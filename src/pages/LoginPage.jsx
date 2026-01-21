@@ -27,7 +27,14 @@ export default function LoginPage() {
       localStorage.setItem("user", JSON.stringify(user));
 
       // navigate("/foods");
-      window.location.href=("/foods")
+    //  window.location.href=("/foods")
+    if (user.role === "ADMIN") {
+      navigate("/admin");
+    } else {
+      navigate("/foods");
+    }
+
+
     } catch (err) {
       setError("Invalid email or password");
     }

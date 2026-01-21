@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function FoodCard({ food, quantity, onQtyChange }) {
+export default function FoodCard({ food, quantity, onQtyChange,onAddToCart}) {
 
   console.log("FoodCard food object:", food); // 👈 ADD HERE
 
@@ -34,6 +34,18 @@ export default function FoodCard({ food, quantity, onQtyChange }) {
             onChange={(e) => onQtyChange(food.id, e.target.value)}
             className="border rounded w-16 p-1 text-center"
           />
+
+
+          <div className="flex gap-2 mt-3">
+            <button
+              onClick={() => onAddToCart(food.id)}
+              className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+            >
+              Add to Cart
+            </button>
+          </div>
+
+
         </div>
       </div>
     </div>
