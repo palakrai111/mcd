@@ -3,10 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { apiFetch } from "../services/api";
 
-export default function Navbar() {
+export default function Navbar({ cartCount }) {
 
 
-  const [cartCount, setCartCount] = useState(0);
   const navigate = useNavigate();
   const userString = localStorage.getItem("user");
   const user = userString ? JSON.parse(userString) : null;
@@ -17,27 +16,6 @@ export default function Navbar() {
   };
 
 
-
-  useEffect(() => {
-    if (user) {
-      loadCartCount();
-    }
-  }, []);
-
-  const loadCartCount = async () => {
-    try {
-      const cart = await apiFetch(`/api/cart/${user.id}`);
-
-      const count = cart.items.reduce(
-        (sum, item) => sum + item.quantity,
-        0
-      );
-
-      setCartCount(count);
-    } catch (err) {
-      console.error("Cart not found");
-    }
-  };
 
   return (
     <nav className="bg-red-600 text-white px-6 py-4 flex justify-between items-center">

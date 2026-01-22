@@ -3,7 +3,7 @@ import { apiFetch } from "../services/api";
 import FoodCard from "../components/FoodCard";
 import { useNavigate } from "react-router-dom";
 
-export default function Foods() {
+export default function Foods({ cartCount, setCartCount }) {
   const [foods, setFoods] = useState([]);
   const [categories, setCategories] = useState([]);
   const [quantities, setQuantities] = useState({});
@@ -88,7 +88,7 @@ const [totalPages, setTotalPages] = useState(0);
         `/api/cart/add/${user.id}/${foodId}?qty=${qty}`,
         { method: "POST" }
       );
-  
+      setCartCount(prev => prev + qty);
       alert("Item added to cart 🛒");
   
     } catch (err) {

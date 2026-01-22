@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import { CartProvider } from "./context/CartContext";
@@ -16,16 +16,18 @@ import AddFood from "./pages/AddFood";
 import AllOrders from "./pages/AllOrders";
 import CartPage from "./pages/CartPage";
 function App() {
+
+  const [cartCount, setCartCount] = useState(0);
   return (
     <CartProvider>
       <BrowserRouter>
-        <Navbar />
+        <Navbar cartCount={cartCount}/>
 
         <Routes>
           {/* USER ROUTES */}
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/foods" element={<Foods />} />
+          <Route path="/foods" element={<Foods cartCount={cartCount} setCartCount={setCartCount} />} />
           <Route path="/orders" element={<Orders />} />
 
           {/* ADMIN ROUTES */}
